@@ -18,6 +18,14 @@ def save_data(data):
     with open(DATA_FILE, 'w') as file:
         json.dump(data, file, indent=4)
 
+def validate_email(email):
+    return (
+        email.count('@') == 1 and              # Check for exactly one '@'
+        email[0] != '@' and                   # Check that it does not start with '@'
+        email.count('.') > 0 and              # Ensure there is at least one '.'
+        email.rfind('.') > email.find('@')    # Last '.' comes after '@'
+    )
+
 def superadmin_login():
     username = input("SuperAdmin username: ")
     password = input("SuperAdmin password: ")
@@ -29,7 +37,8 @@ def superadmin_login():
 
 def superadmin_menu():
     while True:
-        print("\n1. Create Admin")
+        print("\nSuperAdmin Menu:")
+        print("1. Create Admin")
         print("2. View Admins")
         print("3. Delete Admin")
         print("4. Update Admin")
@@ -120,10 +129,17 @@ def create_teacher():
     teachers = data.get('teachers', [])
     
     full_name = input("Full Name: ")
-    gender = input("Gender (Female or Male): ")
+    gender = input("Gender (Male/Female): ").capitalize()
     email = input("Email: ")
     
-    new_teacher = {'full_name': full_name, 'gender': gender, 'email': email}
+    if not validate_email(email):
+        print("Invalid email address!")
+        return
+
+    username = input("Username: ")
+    password = input("Password: ")
+
+    new_teacher = {'full_name': full_name, 'gender': gender, 'email': email, 'username': username, 'password': password}
     teachers.append(new_teacher)
     data['teachers'] = teachers
     save_data(data)
@@ -200,6 +216,3 @@ def send_email():
             print("Email sent successfully!")
     except Exception as e:
         print(f"Failed to send email: {e}")
-
-if __name__ == "__main__":
-    superadmin_login()

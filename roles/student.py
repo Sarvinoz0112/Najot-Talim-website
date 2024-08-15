@@ -88,6 +88,12 @@ def student_menu(username):
         else:
             print("Invalid choice! Please try again.")
 
-if __name__ == "__main__":
+def student_login():
+    students = load_students()
     username = input("Enter your username: ")
-    student_menu(username)
+    student = find_student(username, students)
+
+    if student is None:
+        print("Student not found!")
+    else:
+        student_menu(username)

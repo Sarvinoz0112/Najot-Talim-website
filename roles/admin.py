@@ -30,10 +30,10 @@ def generate_password():
 
 def is_valid_email(email):
     return (
-        email.count('@') == 1 and             # Checks if there is exactly one '@' symbol
-        email[0] != '@' and                    # Ensures the email doesn't start with '@'
-        email.count('.') > 0 and               # Checks if there is at least one '.'
-        email.rfind('.') > email.find('@')     # Ensures the last '.' comes after the '@'
+        email.count('@') == 1 and             
+        email[0] != '@' and                    
+        email.count('.') > 0 and              
+        email.rfind('.') > email.find('@')     
     )
 
 def is_valid_gender(gender):
@@ -272,9 +272,22 @@ def refill_balance():
     save_data(students, 'students.json')
     print(f"{amount} added to the balance of student {student_login}.")
 
+def admin_login():
+    admin_data = load_data('users.json')
+    
+    username = input("Enter admin username: ")
+    password = input("Enter admin password: ")
+    
+    for admin in admin_data:
+        if admin['username'] == username and admin['password'] == password:
+            print("Login successful!")
+            admin_menu()
+            return
+    print("Invalid username or password!")
+
 def admin_menu():
     while True:
-        print("\nAdmin Menu")
+        print("\nAdmin Menu:")
         print("1. Create Group")
         print("2. View Groups")
         print("3. Delete Group")
@@ -282,13 +295,12 @@ def admin_menu():
         print("5. View Students")
         print("6. Delete Student")
         print("7. Add Student to Group")
-        print("8. Search Students")
+        print("8. Search Student")
         print("9. Accept Payment")
-        print("10. Refill student balance")
-        print("0. Exit")
-        
-        choice = input("Enter your choice: ")
-        
+        print("10. Refill Balance")
+        print("11. Logout")
+        choice = input("Select an option: ")
+
         if choice == '1':
             create_group()
         elif choice == '2':
@@ -309,10 +321,7 @@ def admin_menu():
             accept_payment()
         elif choice == '10':
             refill_balance()
-        elif choice == '0':
+        elif choice == '11':
             break
         else:
-            print("Invalid choice. Please try again.")
-
-if __name__ == "__main__":
-    admin_menu()
+            print("Invalid choice! Please try again.")

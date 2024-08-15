@@ -6,25 +6,47 @@ from admin import view_groups as admin_view_groups
 
 @contextmanager
 def open_file(filename, mode):
+    file = None
     try:
         file = open(filename, mode)
         yield file
     finally:
-        file.close()
+        if file is not None:
+            file.close()
 
-def load_groups():
+
+def load_data(filename):
+    """Load data from a JSON file."""
     try:
-        with open_file('groups.json', 'r') as file:
-            data = json.load(file)
-            for item in data:
-                item['start_time'] = datetime.strptime(item['start_time'], "%Y-%m-%d %H:%M:%S")
-                item['end_time'] = datetime.strptime(item['end_time'], "%Y-%m-%d %H:%M:%S")
-                item['students'] = [str(student) for student in item.get('students', [])]
-            return data
+        with open_file(filename, 'r') as file:
+            return json.load(file)
     except FileNotFoundError:
         return []
 
+def load_groups():
+    """Load groups from a JSON file and process the data."""
+    groups = load_data('groups.json')
+    for item in groups:
+        item['start_time'] = datetime.strptime(item['start_time'], "%Y-%m-%d %H:%M:%S")
+        item['end_time'] = datetime.strptime(item['end_time'], "%Y-%m-%d %H:%M:%S")
+        item['students'] = [str(student) for student in item.get('students', [])]
+    return groups
+
 groups = load_groups()
+
+def teacher_login():
+    """Handle teacher login."""
+    teachers = load_data('users.json')
+
+    username = input("Enter teacher username: ")
+    password = input("Enter teacher password: ")
+
+    for teacher in teachers:
+        if teacher['username'] == username and teacher['password'] == password:
+            print("Login successful!")
+            teacher_menu(username)
+            return
+    print("Invalid username or password!")
 
 class Teacher:
     def __init__(self, username):
@@ -61,8 +83,9 @@ class Teacher:
     def end_lesson(self, group_name):
         print(f"Lesson for {group_name} has been ended.")
 
-def teacher_menu():
-    teacher = Teacher("teacher1")
+def teacher_menu(username):
+    """Display the teacher menu and handle options."""
+    teacher = Teacher(username)
     while True:
         print("\nTeacher Menu:")
         print("1. View All Groups")
@@ -82,6 +105,3 @@ def teacher_menu():
             break
         else:
             print("Invalid choice, please try again.")
-
-if __name__ == "__main__":
-    teacher_menu()
