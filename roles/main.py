@@ -1,7 +1,7 @@
 from superadmin import superadmin_login, superadmin_menu
 from admin import admin_login, admin_menu
 from teacher import teacher_login
-from student import student_login  # Import the student_login function
+from student import student_login
 
 def main_menu():
     while True:
@@ -20,7 +20,7 @@ def main_menu():
         elif choice == '3':
             teacher_login()
         elif choice == '4':
-            student_login()  # Call the student_login function
+            student_login()
         elif choice == '5':
             break
         else:
