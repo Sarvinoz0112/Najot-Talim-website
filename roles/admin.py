@@ -23,10 +23,10 @@ def load_data(filename):
         return []
 
 def generate_login():
-    return f'user{random.randint(1000, 9999)}'
+    return f'{random.randint(100000, 999999)}'
 
 def generate_password():
-    return f'pass{random.randint(1000, 9999)}'
+    return f'{random.randint(100000, 999999)}'
 
 def is_valid_email(email):
     return (
@@ -248,6 +248,30 @@ def accept_payment():
     save_data(students, 'students.json')
     print(f"{amount} added to the balance of student {student_login}.")
 
+def refill_balance():
+    students = load_data('students.json')
+
+    while True:
+        student_login = input("Enter the login of the student to refill balance: ")
+        student = next((s for s in students if s['login'] == student_login), None)
+        if student:
+            break
+        else:
+            print("No student with that login found. Please try again.")
+
+    while True:
+        try:
+            amount = Decimal(input("Enter the refill amount: "))
+            if amount < 0:
+                raise ValueError
+            break
+        except ValueError:
+            print("Please enter a positive amount.")
+
+    student['balance'] += amount
+    save_data(students, 'students.json')
+    print(f"{amount} added to the balance of student {student_login}.")
+
 def admin_menu():
     while True:
         print("\nAdmin Menu")
@@ -260,6 +284,7 @@ def admin_menu():
         print("7. Add Student to Group")
         print("8. Search Students")
         print("9. Accept Payment")
+        print("10. Refill student balance")
         print("0. Exit")
         
         choice = input("Enter your choice: ")
@@ -282,6 +307,8 @@ def admin_menu():
             search_student()
         elif choice == '9':
             accept_payment()
+        elif choice == '10':
+            refill_balance()
         elif choice == '0':
             break
         else:
