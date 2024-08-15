@@ -6,7 +6,7 @@ from datetime import datetime
 def save_data(data, filename):
     with open(filename, 'w') as file:
         json.dump(data, file, indent=4)
-        
+
 def load_data(filename):
     try:
         with open(filename, 'r') as file:
@@ -22,10 +22,10 @@ def generate_password():
 
 def create_group():
     groups = load_data('groups.json')
-    
+
     name = input("Group name: ")
     teacher = input("Teacher: ")
-    
+
     while True:
         try:
             max_student = int(input("Maximum number of students: "))
@@ -34,23 +34,26 @@ def create_group():
             break
         except ValueError:
             print("Please enter a positive integer.")
-    
+
     while True:
         start_time = input("Start time (YYYY-MM-DD HH:MM:SS): ")
         end_time = input("End time (YYYY-MM-DD HH:MM:SS): ")
-        
+
         try:
             start_time_dt = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
             end_time_dt = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
+
             if start_time_dt >= end_time_dt:
                 print("Start time must be before end time.")
+            elif start_time_dt < datetime.now():
+                print("Start time must be in the future.")
             else:
                 break
         except ValueError:
             print("Invalid time format. Please use YYYY-MM-DD HH:MM:SS format.")
-    
+
     status = input("Status: ")
-    
+
     new_group = {
         "name": name,
         "teacher": teacher,
@@ -60,10 +63,10 @@ def create_group():
         "status": status,
         "students": []
     }
-    
+
     groups.append(new_group)
     save_data(groups, 'groups.json')
-    print(f"Group '{name}' created.")
+    print(f"Group {name} created.")
 
 def view_groups():
     groups = load_data('groups.json')
@@ -82,27 +85,27 @@ def delete_group():
         if any(group['name'] == group_name for group in groups):
             break
         else:
-            print("No group found with that name. Please try again.")
-    
+            print("No group with that name found. Please try again.")
+
     updated_groups = [group for group in groups if group['name'] != group_name]
     save_data(updated_groups, 'groups.json')
-    print(f"Group '{group_name}' deleted.")
+    print(f"Group {group_name} deleted.")
 
 def create_student():
     students = load_data('students.json')
-    
+
     full_name = input("Full name: ")
     gmail = input("Gmail: ")
-    
+
     while True:
         phone = input("Phone number: ")
         if phone.isdigit():
             break
         else:
-            print("Please enter a valid phone number (digits only).")
-    
+            print("Please enter a valid phone number.")
+
     gender = input("Gender: ")
-    
+
     while True:
         try:
             age = int(input("Age: "))
@@ -111,10 +114,10 @@ def create_student():
             break
         except ValueError:
             print("Please enter a positive integer for age.")
-    
+
     login = generate_login()
     password = generate_password()
-    
+
     new_student = {
         "full_name": full_name,
         "gmail": gmail,
@@ -125,7 +128,7 @@ def create_student():
         "password": password,
         "balance": Decimal('0.00')
     }
-    
+
     students.append(new_student)
     save_data(students, 'students.json')
     print(f"Student created: {full_name} | Login: {login} | Password: {password}")
@@ -145,45 +148,45 @@ def delete_student():
         if any(student['login'] == student_login for student in students):
             break
         else:
-            print("No student found with that login. Please try again.")
-    
+            print("No student with that login found. Please try again.")
+
     updated_students = [student for student in students if student['login'] != student_login]
     save_data(updated_students, 'students.json')
-    print(f"Student with login '{student_login}' deleted.")
+    print(f"Student with login {student_login} deleted.")
 
 def add_student_to_group():
     students = load_data('students.json')
     groups = load_data('groups.json')
-    
+
     while True:
         student_login = input("Enter the login of the student to add: ")
         student = next((s for s in students if s['login'] == student_login), None)
         if student:
             break
         else:
-            print("No student found with that login. Please try again.")
-    
+            print("No student with that login found. Please try again.")
+
     while True:
         group_name = input("Enter the name of the group: ")
         group = next((g for g in groups if g['name'] == group_name), None)
         if group:
             break
         else:
-            print("No group found with that name. Please try again.")
-    
+            print("No group with that name found. Please try again.")
+
     if len(group['students']) < group['max_student']:
         group['students'].append(student_login)
         save_data(groups, 'groups.json')
-        print(f"Student '{student_login}' added to group '{group_name}'.")
+        print(f"Student {student_login} added to group {group_name}.")
     else:
-        print(f"Group '{group_name}' is full.")
+        print(f"Group {group_name} is full.")
 
 def search_student():
     students = load_data('students.json')
-    search_key = input("Enter student name or login to search: ")
-    
+    search_key = input("Enter student name or login: ")
+
     result = [s for s in students if search_key in s['full_name'] or search_key == s['login']]
-    
+
     if result:
         for student in result:
             print(f"Name: {student['full_name']}, Login: {student['login']}, Gmail: {student['gmail']}, Balance: {student['balance']}")
@@ -192,27 +195,27 @@ def search_student():
 
 def accept_payment():
     students = load_data('students.json')
-    
+
     while True:
-        student_login = input("Enter the login of the student for payment: ")
+        student_login = input("Enter the login of the student to accept payment from: ")
         student = next((s for s in students if s['login'] == student_login), None)
         if student:
             break
         else:
-            print("No student found with that login. Please try again.")
-    
+            print("No student with that login found. Please try again.")
+
     while True:
         try:
-            amount = Decimal(input("Enter payment amount: "))
+            amount = Decimal(input("Enter the payment amount: "))
             if amount < 0:
                 raise ValueError
             break
         except ValueError:
             print("Please enter a positive amount.")
-    
+
     student['balance'] += amount
     save_data(students, 'students.json')
-    print(f"Added {amount} to the balance of student '{student_login}'.")
+    print(f"{amount} added to the balance of student {student_login}.")
 
 def admin_menu():
     while True:
