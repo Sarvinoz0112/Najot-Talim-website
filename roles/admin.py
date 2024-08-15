@@ -4,13 +4,21 @@ from decimal import Decimal
 from datetime import datetime
 
 def save_data(data, filename):
+    def decimal_default(obj):
+        if isinstance(obj, Decimal):
+            return float(obj)
+
     with open(filename, 'w') as file:
-        json.dump(data, file, indent=4)
+        json.dump(data, file, indent=4, default=decimal_default)
 
 def load_data(filename):
     try:
         with open(filename, 'r') as file:
-            return json.load(file)
+            data = json.load(file)
+            for item in data:
+                if 'balance' in item:
+                    item['balance'] = Decimal(item['balance'])
+            return data
     except FileNotFoundError:
         return []
 
@@ -19,6 +27,18 @@ def generate_login():
 
 def generate_password():
     return f'pass{random.randint(1000, 9999)}'
+
+def is_valid_email(email):
+    return (
+        email.count('@') == 1 and             # Checks if there is exactly one '@' symbol
+        email[0] != '@' and                    # Ensures the email doesn't start with '@'
+        email.count('.') > 0 and               # Checks if there is at least one '.'
+        email.rfind('.') > email.find('@')     # Ensures the last '.' comes after the '@'
+    )
+
+def is_valid_gender(gender):
+    valid_genders = ['Male', 'Female']
+    return gender in valid_genders
 
 def create_group():
     groups = load_data('groups.json')
@@ -95,7 +115,13 @@ def create_student():
     students = load_data('students.json')
 
     full_name = input("Full name: ")
-    gmail = input("Gmail: ")
+
+    while True:
+        gmail = input("Gmail: ")
+        if is_valid_email(gmail):
+            break
+        else:
+            print("Invalid email format. Please try again.")
 
     while True:
         phone = input("Phone number: ")
@@ -104,7 +130,12 @@ def create_student():
         else:
             print("Please enter a valid phone number.")
 
-    gender = input("Gender: ")
+    while True:
+        gender = input("Gender (Male/Female): ").capitalize()
+        if is_valid_gender(gender):
+            break
+        else:
+            print("Invalid gender. Please enter Male or Female.")
 
     while True:
         try:
@@ -252,7 +283,6 @@ def admin_menu():
         elif choice == '9':
             accept_payment()
         elif choice == '0':
-            print("Exiting...")
             break
         else:
             print("Invalid choice. Please try again.")

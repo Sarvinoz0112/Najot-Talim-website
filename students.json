@@ -1,0 +1,42 @@
+[
+    {
+        "full_name": "sa",
+        "gmail": "sasda",
+        "phone": "4555",
+        "gender": "assa",
+        "age": 14,
+        "login": "user2004",
+        "password": "pass2274",
+        "balance": 0.0
+    },
+    {
+        "full_name": "sas",
+        "gmail": "sass",
+        "phone": "44",
+        "gender": "sas",
+        "age": 555,
+        "login": "user1043",
+        "password": "pass7778",
+        "balance": 0.0
+    },
+    {
+        "full_name": "saads",
+        "gmail": "max@gmail.com",
+        "phone": "444",
+        "gender": "asa",
+        "age": 14,
+        "login": "user7939",
+        "password": "pass5992",
+        "balance": 0.0
+    },
+    {
+        "full_name": "asA",
+        "gmail": "a@gmail.com",
+        "phone": "444",
+        "gender": "Male",
+        "age": 17,
+        "login": "user8805",
+        "password": "pass5272",
+        "balance": 0.0
+    }
+]
