@@ -1,19 +1,9 @@
 import json
-from decimal import Decimal
 from datetime import datetime
-from contextlib import contextmanager
-from admin import view_groups as admin_view_groups
 
-@contextmanager
-def open_file(filename, mode):
-    '''Context manager to handle opening and closing files.'''
-    file = None
-    try:
-        file = open(filename, mode)
-        yield file
-    finally:
-        if file is not None:
-            file.close()
+from admin import view_groups as admin_view_groups
+from manegers.con_manager import open_file
+
 
 def load_data(filename):
     '''Load data from a JSON file, returning an empty list if the file is not found.'''
@@ -22,6 +12,7 @@ def load_data(filename):
             return json.load(file)
     except FileNotFoundError:
         return []
+
 
 def load_groups():
     '''Load groups from a JSON file and convert date strings to datetime objects.'''
@@ -32,7 +23,9 @@ def load_groups():
         item['students'] = [str(student) for student in item.get('students', [])]
     return groups
 
+
 groups = load_groups()
+
 
 def teacher_login():
     '''Handle teacher login by checking username and password against the stored data.'''
@@ -47,6 +40,7 @@ def teacher_login():
             teacher_menu(username)
             return
     print("Invalid username or password!")
+
 
 class Teacher:
     def __init__(self, username):
@@ -66,7 +60,7 @@ class Teacher:
                 print(f"- {student}")
         else:
             print(f"Group {group_name} does not exist.")
-    
+
     def start_lesson(self):
         '''Start a lesson for a chosen group and provide options to end the lesson or go back.'''
         self.view_groups()
@@ -83,10 +77,11 @@ class Teacher:
                     print("Invalid choice, please try again.")
         else:
             print(f"Group {group_name} does not exist.")
-    
+
     def end_lesson(self, group_name):
         '''End a lesson for the specified group.'''
         print(f"Lesson for {group_name} has been ended.")
+
 
 def teacher_menu(username):
     '''Display the teacher menu and handle user choices.'''
@@ -97,7 +92,7 @@ def teacher_menu(username):
         print("2. View Students by Group")
         print("3. Start Lesson")
         print("4. Exit")
-        
+
         choice = input("Choose an option: ")
         if choice == "1":
             teacher.view_groups()
