@@ -1,6 +1,6 @@
 from admin import save_data as admin_save_data
 from admin import view_groups as admin_view_groups
-from manegers.con_manager import read_data
+from managers.con_manager import read_data
 
 
 def load_students():
