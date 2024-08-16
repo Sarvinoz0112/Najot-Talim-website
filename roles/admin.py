@@ -3,7 +3,7 @@ import random
 from datetime import datetime
 from decimal import Decimal
 
-from manegers.con_manager import open_file
+from managers.con_manager import open_file
 
 def read_json():
     try:

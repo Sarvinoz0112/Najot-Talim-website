@@ -1,0 +1,11 @@
+[
+    {
+        "name": "a",
+        "teacher": "a",
+        "max_student": 1,
+        "start_time": "2025-01-01 12:00:00",
+        "end_time": "2025-01-01 13:00:00",
+        "status": "a",
+        "students": []
+    }
+]

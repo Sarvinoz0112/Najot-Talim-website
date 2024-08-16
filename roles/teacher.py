@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 
 from admin import view_groups as admin_view_groups
-from manegers.con_manager import open_file
+from managers.con_manager import open_file
 
 
 def load_data(filename):
