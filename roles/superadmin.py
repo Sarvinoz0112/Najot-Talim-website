@@ -8,6 +8,7 @@ SUPERADMIN_USERNAME = 'superadmin'
 SUPERADMIN_PASSWORD = '0000'
 
 def load_data():
+    '''Loads data from the JSON file. Returns an empty dictionary if the file is not found.'''
     try:
         with open(DATA_FILE, 'r') as file:
             return json.load(file)
@@ -15,10 +16,12 @@ def load_data():
         return {}
 
 def save_data(data):
+    '''Saves data to the JSON file.'''
     with open(DATA_FILE, 'w') as file:
         json.dump(data, file, indent=4)
 
 def validate_email(email):
+    '''Validates the format of the email address.'''
     return (
         email.count('@') == 1 and              # Check for exactly one '@'
         email[0] != '@' and                   # Check that it does not start with '@'
@@ -27,6 +30,7 @@ def validate_email(email):
     )
 
 def superadmin_login():
+    '''Prompts for SuperAdmin login credentials and calls the menu function if successful.'''
     username = input("SuperAdmin username: ")
     password = input("SuperAdmin password: ")
     
@@ -36,6 +40,7 @@ def superadmin_login():
         print("Login failed!")
 
 def superadmin_menu():
+    '''Displays the SuperAdmin menu and handles user choices for managing admins, teachers, and sending emails.'''
     while True:
         print("\nSuperAdmin Menu:")
         print("1. Create Admin")
@@ -75,6 +80,7 @@ def superadmin_menu():
             print("Invalid choice!")
 
 def create_admin():
+    '''Prompts for admin details and adds a new admin to the data.'''
     data = load_data()
     admins = data.get('admins', [])
     
@@ -89,12 +95,14 @@ def create_admin():
     print("Admin created successfully!")
 
 def view_admins():
+    '''Displays a list of all admins.'''
     data = load_data()
     admins = data.get('admins', [])
     for idx, admin in enumerate(admins, start=1):
         print(f"{idx}. {admin['full_name']} ({admin['username']})")
 
 def delete_admin():
+    '''Prompts to select an admin to delete and removes it from the data.'''
     data = load_data()
     admins = data.get('admins', [])
     view_admins()
@@ -109,6 +117,7 @@ def delete_admin():
         print("Invalid selection!")
 
 def update_admin():
+    '''Prompts to select an admin to update and modifies their details.'''
     data = load_data()
     admins = data.get('admins', [])
     view_admins()
@@ -125,6 +134,7 @@ def update_admin():
         print("Invalid selection!")
 
 def create_teacher():
+    '''Prompts for teacher details and adds a new teacher to the data.'''
     data = load_data()
     teachers = data.get('teachers', [])
     
@@ -146,12 +156,14 @@ def create_teacher():
     print("Teacher created successfully!")
 
 def view_teachers():
+    '''Displays a list of all teachers.'''
     data = load_data()
     teachers = data.get('teachers', [])
     for idx, teacher in enumerate(teachers, start=1):
         print(f"{idx}. {teacher['full_name']} ({teacher['gender']}) - {teacher['email']}")
 
 def delete_teacher():
+    '''Prompts to select a teacher to delete and removes them from the data.'''
     data = load_data()
     teachers = data.get('teachers', [])
     view_teachers()
@@ -166,6 +178,7 @@ def delete_teacher():
         print("Invalid selection!")
 
 def update_teacher():
+    '''Prompts to select a teacher to update and modifies their details.'''
     data = load_data()
     teachers = data.get('teachers', [])
     view_teachers()
@@ -182,6 +195,7 @@ def update_teacher():
         print("Invalid selection!")
 
 def send_email():
+    '''Prompts for email details and sends an email to selected teachers based on their gender.'''
     data = load_data()
     teachers = data.get('teachers', [])
     

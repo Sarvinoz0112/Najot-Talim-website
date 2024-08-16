@@ -4,14 +4,15 @@ from decimal import Decimal
 from datetime import datetime
 
 def save_data(data, filename):
+    '''Save data to a JSON file with proper handling of Decimal values.'''
     def decimal_default(obj):
         if isinstance(obj, Decimal):
             return float(obj)
-
     with open(filename, 'w') as file:
         json.dump(data, file, indent=4, default=decimal_default)
 
 def load_data(filename):
+    '''Load data from a JSON file and convert balance values to Decimal.'''
     try:
         with open(filename, 'r') as file:
             data = json.load(file)
@@ -23,12 +24,15 @@ def load_data(filename):
         return []
 
 def generate_login():
+    '''Generate a random 6-digit login string.'''
     return f'{random.randint(100000, 999999)}'
 
 def generate_password():
+    '''Generate a random 6-digit password string.'''
     return f'{random.randint(100000, 999999)}'
 
 def is_valid_email(email):
+    '''Check if the provided email address is valid.'''
     return (
         email.count('@') == 1 and             
         email[0] != '@' and                    
@@ -37,10 +41,12 @@ def is_valid_email(email):
     )
 
 def is_valid_gender(gender):
+    '''Check if the provided gender is valid.'''
     valid_genders = ['Male', 'Female']
     return gender in valid_genders
 
 def create_group():
+    '''Create a new group with details provided by the user.'''
     groups = load_data('groups.json')
 
     name = input("Group name: ")
@@ -89,6 +95,7 @@ def create_group():
     print(f"Group {name} created.")
 
 def view_groups():
+    '''View details of all existing groups.'''
     groups = load_data('groups.json')
     if not groups:
         print("No groups found.")
@@ -99,6 +106,7 @@ def view_groups():
                   f"Students: {len(group['students'])}/{group['max_student']}, Status: {group['status']}")
 
 def delete_group():
+    '''Delete a group based on the name provided by the user.'''
     groups = load_data('groups.json')
     while True:
         group_name = input("Enter the name of the group to delete: ")
@@ -112,6 +120,7 @@ def delete_group():
     print(f"Group {group_name} deleted.")
 
 def create_student():
+    '''Create a new student with details provided by the user.'''
     students = load_data('students.json')
 
     full_name = input("Full name: ")
@@ -165,6 +174,7 @@ def create_student():
     print(f"Student created: {full_name} | Login: {login} | Password: {password}")
 
 def view_students():
+    '''View details of all existing students.'''
     students = load_data('students.json')
     if not students:
         print("No students found.")
@@ -173,6 +183,7 @@ def view_students():
             print(f"Name: {student['full_name']}, Login: {student['login']}, Balance: {student['balance']}")
 
 def delete_student():
+    '''Delete a student based on the login provided by the user.'''
     students = load_data('students.json')
     while True:
         student_login = input("Enter the login of the student to delete: ")
@@ -186,6 +197,7 @@ def delete_student():
     print(f"Student with login {student_login} deleted.")
 
 def add_student_to_group():
+    '''Add a student to a group if there's space available.'''
     students = load_data('students.json')
     groups = load_data('groups.json')
 
@@ -213,6 +225,7 @@ def add_student_to_group():
         print(f"Group {group_name} is full.")
 
 def search_student():
+    '''Search for a student by name or login and display their details.'''
     students = load_data('students.json')
     search_key = input("Enter student name or login: ")
 
@@ -225,6 +238,7 @@ def search_student():
         print("No student found.")
 
 def accept_payment():
+    '''Accept a payment from a student and update their balance.'''
     students = load_data('students.json')
 
     while True:
@@ -249,6 +263,7 @@ def accept_payment():
     print(f"{amount} added to the balance of student {student_login}.")
 
 def refill_balance():
+    '''Refill a student's balance with a specified amount.'''
     students = load_data('students.json')
 
     while True:
@@ -270,24 +285,36 @@ def refill_balance():
 
     student['balance'] += amount
     save_data(students, 'students.json')
-    print(f"{amount} added to the balance of student {student_login}.")
+    print(f"Student {student_login}'s balance refilled by {amount}.")
 
-def admin_login():
-    admin_data = load_data('users.json')
-    
-    username = input("Enter admin username: ")
-    password = input("Enter admin password: ")
-    
-    for admin in admin_data:
-        if admin['username'] == username and admin['password'] == password:
-            print("Login successful!")
-            admin_menu()
-            return
-    print("Invalid username or password!")
+def get_student_balance():
+    '''Display the balance of a student.'''
+    students = load_data('students.json')
 
-def admin_menu():
     while True:
-        print("\nAdmin Menu:")
+        student_login = input("Enter the login of the student: ")
+        student = next((s for s in students if s['login'] == student_login), None)
+        if student:
+            print(f"Student {student_login}'s balance: {student['balance']}")
+            break
+        else:
+            print("No student with that login found. Please try again.")
+
+def view_groups():
+    '''View details of all existing groups.'''
+    groups = load_data('groups.json')
+    if not groups:
+        print("No groups found.")
+    else:
+        for group in groups:
+            print(f"Name: {group['name']}, Teacher: {group['teacher']}, "
+                  f"Start Time: {group['start_time']}, End Time: {group['end_time']}, "
+                  f"Students: {len(group['students'])}/{group['max_student']}, Status: {group['status']}")
+
+def main_menu():
+    '''Display the main menu and handle user input.'''
+    while True:
+        print("\nMain Menu:")
         print("1. Create Group")
         print("2. View Groups")
         print("3. Delete Group")
@@ -298,8 +325,10 @@ def admin_menu():
         print("8. Search Student")
         print("9. Accept Payment")
         print("10. Refill Balance")
-        print("11. Logout")
-        choice = input("Select an option: ")
+        print("11. Get Student Balance")
+        print("12. Exit")
+
+        choice = input("Choose an option: ")
 
         if choice == '1':
             create_group()
@@ -322,6 +351,12 @@ def admin_menu():
         elif choice == '10':
             refill_balance()
         elif choice == '11':
+            get_student_balance()
+        elif choice == '12':
+            print("Exiting...")
             break
         else:
-            print("Invalid choice! Please try again.")
+            print("Invalid choice. Please try again.")
+
+if __name__ == '__main__':
+    main_menu()

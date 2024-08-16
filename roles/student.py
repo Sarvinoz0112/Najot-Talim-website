@@ -3,26 +3,32 @@ from admin import view_groups as admin_view_groups
 from admin import load_data as admin_load_data, save_data as admin_save_data
 
 def load_students():
+    '''Load students data from the 'students.json' file.'''
     return admin_load_data('students.json')
 
 def save_students(students):
+    '''Save updated students data to the 'students.json' file.'''
     admin_save_data({"students": students}, 'students.json')
 
 def find_student(username, students):
+    '''Find and return a student by username from the list of students.'''
     for student in students:
         if student['username'] == username:
             return student
     return None
 
 def view_groups(student):
+    '''Display the groups that the student is a member of.'''
     print("Your Groups:")
     for group in student['groups']:
         print(f"- {group}")
 
 def view_balance(student):
+    '''Display the student's current balance.'''
     print(f"Your Balance: ${student['balance']:.2f}")
 
 def get_valid_age():
+    '''Prompt the user to enter a valid age (positive integer).'''
     while True:
         try:
             age = int(input("Enter new age: "))
@@ -34,6 +40,7 @@ def get_valid_age():
             print("Invalid input. Please enter a valid integer for age.")
 
 def get_valid_email():
+    '''Prompt the user to enter a valid email address.'''
     while True:
         email = input("Enter new email: ")
         if (
@@ -47,6 +54,7 @@ def get_valid_email():
             print("Invalid email format. Please enter a valid email address.")
 
 def update_personal_info(student):
+    '''Update the student's personal information (name, age, email).'''
     print("Update Personal Information:")
     name = input("Enter new name: ")
     age = get_valid_age()
@@ -60,6 +68,7 @@ def update_personal_info(student):
     print("Personal information updated successfully!")
 
 def student_menu(username):
+    '''Display the student menu and handle user choices.'''
     students = load_students()
     student = find_student(username, students)
 
@@ -89,6 +98,7 @@ def student_menu(username):
             print("Invalid choice! Please try again.")
 
 def student_login():
+    '''Handle student login and direct them to the student menu if credentials are valid.'''
     students = load_students()
     username = input("Enter your username: ")
     student = find_student(username, students)

@@ -4,6 +4,7 @@ from teacher import teacher_login
 from student import student_login
 
 def main_menu():
+    '''Displays the main menu and handles user input for login options or exit.'''
     while True:
         print("\nMain Menu:")
         print("1. Login as SuperAdmin")

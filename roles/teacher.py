@@ -6,6 +6,7 @@ from admin import view_groups as admin_view_groups
 
 @contextmanager
 def open_file(filename, mode):
+    '''Context manager to handle opening and closing files.'''
     file = None
     try:
         file = open(filename, mode)
@@ -14,9 +15,8 @@ def open_file(filename, mode):
         if file is not None:
             file.close()
 
-
 def load_data(filename):
-    """Load data from a JSON file."""
+    '''Load data from a JSON file, returning an empty list if the file is not found.'''
     try:
         with open_file(filename, 'r') as file:
             return json.load(file)
@@ -24,7 +24,7 @@ def load_data(filename):
         return []
 
 def load_groups():
-    """Load groups from a JSON file and process the data."""
+    '''Load groups from a JSON file and convert date strings to datetime objects.'''
     groups = load_data('groups.json')
     for item in groups:
         item['start_time'] = datetime.strptime(item['start_time'], "%Y-%m-%d %H:%M:%S")
@@ -35,7 +35,7 @@ def load_groups():
 groups = load_groups()
 
 def teacher_login():
-    """Handle teacher login."""
+    '''Handle teacher login by checking username and password against the stored data.'''
     teachers = load_data('users.json')
 
     username = input("Enter teacher username: ")
@@ -50,12 +50,15 @@ def teacher_login():
 
 class Teacher:
     def __init__(self, username):
+        '''Initialize a Teacher object with a username.'''
         self.username = username
 
     def view_groups(self):
+        '''View all groups using the admin view_groups function.'''
         admin_view_groups()
 
     def view_students_by_group(self, group_name):
+        '''View students in a specific group.'''
         group = next((g for g in groups if g['name'] == group_name), None)
         if group:
             print(f"Students in {group_name}:")
@@ -65,6 +68,7 @@ class Teacher:
             print(f"Group {group_name} does not exist.")
     
     def start_lesson(self):
+        '''Start a lesson for a chosen group and provide options to end the lesson or go back.'''
         self.view_groups()
         group_name = input("Select a group: ")
         if next((g for g in groups if g['name'] == group_name), None):
@@ -81,10 +85,11 @@ class Teacher:
             print(f"Group {group_name} does not exist.")
     
     def end_lesson(self, group_name):
+        '''End a lesson for the specified group.'''
         print(f"Lesson for {group_name} has been ended.")
 
 def teacher_menu(username):
-    """Display the teacher menu and handle options."""
+    '''Display the teacher menu and handle user choices.'''
     teacher = Teacher(username)
     while True:
         print("\nTeacher Menu:")
